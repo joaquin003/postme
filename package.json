@@ -4,7 +4,8 @@
   "description": "Es una aplicacion progresiva",
   "main": "index.js",
   "scripts": {
-    "start": "http-server -c-1 ."
+    "start": "http-server -c-1 .",
+    "secure": "ngrok 8081"
   },
   "keywords": [
     "pwa",
