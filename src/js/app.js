@@ -6,6 +6,7 @@ let BTN_CANCEL_POST;
 let deferredPrompt;
 let TITLE;
 let DESCRIPTION;
+let DB_POUCH;
 
 //funciones
 const showPostModal = () => {
@@ -62,6 +63,9 @@ window.addEventListener('beforeinstallprompt', (e)=>{
 //cuando se cargue todo nuestro DOM
 window.addEventListener('load', async ()=>{
     try {
+        //declarando mi instancia de base de datos creada por PouchDB
+        DB_POUCH = new PouchDB('posts');
+
         MAIN = document.querySelector("#main");
         MODAL_POST = document.querySelector("#modal-post-section");
         BTN_SHOW_POST = document.querySelector("#btn-upload-post");
