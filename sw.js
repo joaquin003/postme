@@ -79,6 +79,7 @@ self.addEventListener('fetch', (event) => {
             })
         }));
         event.respondWith(cacheAyudaRed);
+        console.log("[SW] Archivos guardados..")
 
     //cuarta estrategia: red pidiendo ayuda a cache
     /* const respuesta = new Response("Esta es la parte que fallo");
