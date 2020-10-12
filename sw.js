@@ -106,7 +106,30 @@ self.addEventListener('fetch', (event) => {
         event.respondWith(chaceLuegoRed);*/
 });
 self.addEventListener('sync',(event)=>{
-    console.log(event);
+    if(event.tag === "new-post"){
+        const urlRD = 'https://postme-app-ebc19.firebaseio.com/postme-app-ebc19.json';
+        const dbPost = new PouchDB('posts');
+        dbPost.allDocs(({include_docs: true}))
+            .then((docs) => {
+                docs.rows.forEach(registro => {
+                    const doc = registro.doc;
+                    fetch(urlRD, {
+                        method: 'POST',
+                        cors: 'no-cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(doc)
+                    })
+                    .then(response => {
+                        console.info('La transanccion o registro fue exitoso');
+                        dbPost.remove(doc);
+                    })
+                    .catch(err => console.error(err.message));
+                })
+            })
+    }
 });
 self.addEventListener('push',(event)=>{
     console.error(event);

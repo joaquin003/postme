@@ -28,14 +28,24 @@ const sendData = async (e) => {
         TITLE = document.querySelector('#title').value;
         DESCRIPTION = document.querySelector('#description').value;
         if(TITLE && DESCRIPTION){
-            await db.collection('posts').add({
+            const post = {
                 title: TITLE,
-                description: DESCRIPTION,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
+                description: DESCRIPTION
+            }
+            //vamos a utilizar el syncManager
+            if(window.SyncManager){
+                //grabar o armar nuestra logica
+                const readySW = await navigator.serviceWorker.ready;
+                await readySW.sync.register('new-post');
+                post._id = new Date().toISOString();
+                await DB_POUCH.put(post);
+            }else{
+                post.timestamp = firebase.firestore.FieldValue.serverTimestamp()
+                await db.collection('posts').add(post);
+            }
             const data = {
                 message: 'Registro exitosamente almacenado',
-                timeout: 1500
+                timeout: 4000
             };
             Message().MaterialSnackbar.showSnackbar(data);
         }else{
@@ -53,6 +63,41 @@ const sendData = async (e) => {
         Message('error').MaterialSnackbar.showSnackbar(data);
     }
 }
+
+const showNotification = () =>{
+    //new Notification('Notificaciones activadas');
+    navigator.serviceWorker.getRegistration()
+        .then(instancia => {
+            instancia.showNotification('Notificaciones activadas' , {
+                body: "El cuerpo de la notificacion",
+                icon: 'src/images/icons/icon-144x144.png',
+                image: 'src/images/computer.jpg',
+                badge: 'src/images/icons/icon-144x144.png',
+                dir: 'ltr',
+                tag: "notification-postme",
+                requireInteraction: true,
+                vibrate: [100,50,200],
+                actions: [
+                    {action: 'confirm', title: 'Aceptar', icon: 'src/images/icons/icon-144x144.png'},
+                    {action: 'cancel', title: 'Cancelar', icon: 'src/images/icons/icon-144x144.png'}
+                ]
+            });
+        })
+        .catch(err => console.error(err.message))
+};
+
+const requestPermission = async () => {
+    const result = await Notification.requestPermission();
+    if(result !== 'granted'){
+        const data = {
+            message: 'El usuario no activo las notificaciones',
+            timeout: 5000
+        };
+        Message('error').MaterialSnackbar.showSnackbar(data);
+    }else{
+        showNotification();
+    }
+};
 
 //evitar que salga la pantalla de instalar
 window.addEventListener('beforeinstallprompt', (e)=>{
@@ -89,6 +134,10 @@ window.addEventListener('load', async ()=>{
         window.Loading = (option = "block") => {
             document.querySelector('#loading').style.display = option;
         };
+
+        //seccion notificaciones
+        BTN_NOTIFICATIONS = document.querySelector('#notifications-install');
+        BTN_NOTIFICATIONS.addEventListener('click', requestPermission);
 
         //agarrando el boton enviar post
         const btnPostSubmit = document.querySelector("#btn-post-submit");
