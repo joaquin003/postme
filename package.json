@@ -1,20 +1,25 @@
 {
-  "name": "postme",
+  "name": "postme-backend",
   "version": "1.0.0",
-  "description": "Es una aplicacion progresiva",
+  "description": "Ese sera el backend de postme el cual mostrara la carpeta publfrontend",
   "main": "index.js",
   "scripts": {
-    "start": "http-server -c-1 .",
-    "secure": "ngrok 8081"
+    "start": "node index.js",
+    "web-push": " web-push generate-vapid-keys"
   },
-  "keywords": [
-    "pwa",
-    "postme",
-    "EDteam"
-  ],
-  "author": "joaquinuliambre.ju@gmail.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joaquin003/postme.git"
+  },
+  "author": "Joaquin Uliambre Frutos",
   "license": "ISC",
-  "devDependencies": {
-    "http-server": "^0.12.3"
+  "bugs": {
+    "url": "https://github.com/joaquin003/postme/issues"
+  },
+  "homepage": "https://github.com/joaquin003/postme#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "web-push": "^3.4.4"
   }
 }
