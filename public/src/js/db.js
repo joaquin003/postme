@@ -68,16 +68,16 @@ const share = async (title, text, image) => {
       console.log('------------------------------------');
       console.log(url);
       console.log('------------------------------------');
-      // let imgBlob = await fetch(image, {
-      //   mode: 'no-cors',
-      //   responseType: 'blob',
-      //   method: 'GET'
-      // });
-      // imgBlob = await imgBlob.blob();
-      // console.log('------------------------------------');
-      // console.log(imgBlob);
-      // console.log('------------------------------------');
-  
+     let imgBlob = await fetch(image, {
+       mode: 'no-cors',
+       responseType: 'blob',
+       method: 'GET'
+    });
+    imgBlob = await imgBlob.blob();
+    console.log('------------------------------------');
+    console.log(imgBlob);
+    console.log('------------------------------------');
+
       if (navigator.canShare && navigator.canShare({ files: [image] })) {
         const data = {
           files: [image],
