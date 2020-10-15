@@ -41,26 +41,66 @@ const createPosts = ({description,title,image,timestamp}) => {
     cardDateContainer.appendChild(enlace);
 
     //share
-    const cardShareContainer = document.createElement('div');
-    cardShareContainer.className="mdl-card__menu";
-
-    const button = document.createElement('div');
-    button.className='mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect';
-
+    const btnShare = document.createElement('div');
+    btnShare.className = 'mdl-card__menu';
+    const btn = document.createElement('button');
+    btn.className = 'mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect';
+    btn.addEventListener('click', () => share(title, description, image));
     const icon = document.createElement('i');
-    icon.className='material-icons mdl-color-text--orange';
+    icon.className = 'material-icons mdl-color-text--orange';
     icon.appendChild(document.createTextNode('share'));
-    button.appendChild(icon);
-    cardShareContainer.appendChild(button);
+  
+    btn.appendChild(icon);
+    btnShare.appendChild(btn);
 
     cardText.appendChild(cardTitleContainer);
     cardText.appendChild(cardBodyContainer);
     cardText.appendChild(cardDateContainer);
-    cardText.appendChild(cardShareContainer);
+    cardText.appendChild(btnShare);
 
     componentHandler.upgradeElement(cardText);
     MAIN.appendChild(cardText);
 };
+
+const share = async (title, text, image) => {
+    if (image) {
+      const url = URL.createObjectURL(image);
+      console.log('------------------------------------');
+      console.log(url);
+      console.log('------------------------------------');
+      // let imgBlob = await fetch(image, {
+      //   mode: 'no-cors',
+      //   responseType: 'blob',
+      //   method: 'GET'
+      // });
+      // imgBlob = await imgBlob.blob();
+      // console.log('------------------------------------');
+      // console.log(imgBlob);
+      // console.log('------------------------------------');
+  
+      if (navigator.canShare && navigator.canShare({ files: [image] })) {
+        const data = {
+          files: [image],
+          title,
+          text
+        };
+        await navigator.share(data);
+      }
+    } else {
+      if (navigator.share) {
+        const data = {
+          title,
+          text
+        };
+        await navigator.share(data);
+      } else {
+        const data = {
+          message: 'Tu navegador no soporta la opción de compartir'
+        };
+        Message('error').MaterialSnackbar.showSnackbar(data);
+      }
+    }
+  };
 
 if(window.location.href.includes('post.html')){
     db.collection('posts').onSnapshot((snapshot) => {
